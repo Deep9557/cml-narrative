@@ -18,11 +18,31 @@
 
 
     let agentName: string
+    let reqBody: any;
 
     agentData.subscribe(value => {
-        agentName = value.agentName
+        agentName = value.agentName,
+        reqBody = value;
     })
 
+
+    async function confirmProfile () {
+        reqBody['password']='test';
+        let payload = JSON.stringify(reqBody);
+
+        console.log(payload);
+		const res = await fetch('http://localhost:8001/api/auth/signup', {
+			method: 'POST',
+			body: payload
+		});
+		
+		const json = await res.json()
+        console.log(json);
+		let result = JSON.stringify(json)
+        console.log(result);
+        
+//href="/introduction/welcome?page=1"
+	}
 
 
 </script>
@@ -30,5 +50,5 @@
 <div class="flex flex-col w-full h-full justify-center items-center space-y-10 bg-gray-50">
     <img src="/img/icons/profile.png" alt="" class="h-1/5">
     <h1 class="text-5xl text-lapiz-blue">Agent {agentName}</h1>
-    <a href="/introduction/welcome?page=1" class="bg-lapiz-blue text-white text-3xl px-7 py-3 rounded-md shadow hover:shadow-lg">CONFIRM</a>
+    <button  on:click={confirmProfile} class="bg-lapiz-blue text-white text-3xl px-7 py-3 rounded-md shadow hover:shadow-lg">CONFIRM</button>
 </div>

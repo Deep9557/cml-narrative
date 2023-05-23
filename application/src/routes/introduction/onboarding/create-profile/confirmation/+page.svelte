@@ -14,36 +14,38 @@
 
 	
     import type { UserData } from "$lib/types/UserData";
-	import { agentData } from "$lib/utils/stores/store";
-
+	import { agentData, accessToken } from "$lib/utils/stores/store";
+    import { goto } from "$app/navigation";
+    import  axios from "axios";
 
     let agentName: string
-    let reqBody: any;
+    let data: any;
 
     agentData.subscribe(value => {
         agentName = value.agentName,
-        reqBody = value;
+        data = value;
     })
 
 
-    async function confirmProfile () {
-        reqBody['password']='test';
-        let payload = JSON.stringify(reqBody);
-
-        console.log(payload);
-		const res = await fetch('http://localhost:8001/api/auth/signup', {
-			method: 'POST',
-			body: payload
-		});
-		
-		const json = await res.json()
-        console.log(json);
-		let result = JSON.stringify(json)
-        console.log(result);
+    function confirmProfile () {
+        data['password']='test'; //TBD: 
+        axios.post('https://cml-backend-deep9557.vercel.app/api/auth/signup', {
+            data
+        }).then(res=>{
+            console.log(res);
+            if(res!=null && 200==res.request?.status) {
+                //1. save access token received in response (in data.accessToken object in response)
+                accessToken.set(res.data?.accessToken);
+                //2/ redirect to other page.
+                goto("/introduction/welcome?page=1")
+            } else {
+                console.log('something breaking..')
+            }
+        }).catch(err=>{
+            console.error(err);
+        });
         
-//href="/introduction/welcome?page=1"
 	}
-
 
 </script>
 

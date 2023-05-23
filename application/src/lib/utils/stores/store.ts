@@ -14,3 +14,4 @@ import type { UserData } from '$lib/types/UserData';
 import { writable } from 'svelte/store';
 
 export const agentData = writable({});
+export const accessToken = writable({});
